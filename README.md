@@ -1,3 +1,6 @@
+Super, popravil bom `README.md` in dodal informacije o Android aplikaciji, ki je povezana s spletno stranjo. Prav tako bom popravil tipkarsko napako ("amestitev" → "Namestitev").
+
+```markdown
 # Spletna trgovina za prodajo kart
 
 > Spletna aplikacija za prodajo vstopnic za koncerte, kinematografe, muzeje in druge dogodke.
@@ -16,6 +19,19 @@ Sistem je zgrajen po **MVC arhitekturnem vzorcu** za boljšo preglednost in vzdr
 
 ---
 
+## Mobilna aplikacija (Android)
+
+Projekt vključuje tudi **Android aplikacijo**, razvito v **Android Studiu** (Java), ki prek API-ja komunicira s spletno stranjo. Aplikacija omogoča:
+
+- Prijavo uporabnikov
+- Brskanje po ponudbi kart (prikaz iz baze)
+- Prikaz osebnih podatkov uporabnika
+- Povezavo s strežnikom prek REST API-ja
+
+Aplikacija se poganja v **Android emulatorju** in se realno povezuje s spletno trgovino, kar omogoča testiranje delovanja na mobilni napravi.
+
+---
+
 ## Uporabniške vloge
 
 Sistem podpira štiri tipe uporabnikov z različnimi pravicami:
@@ -30,10 +46,6 @@ Sistem podpira štiri tipe uporabnikov z različnimi pravicami:
 ---
 
 ## Testni uporabniki
-
-### Gesla so sestavljena po vzorcu: `imePriimek1!`
-**(prva črka imena mala, priimek z veliko začetnico, sledi `1!`)**  
-Primer: Vanja Venko → `vanjaVenko1!`
 
 ### ADMIN uporabnik
 | Ime | Priimek | Email | Geslo | Vloga |
@@ -69,11 +81,18 @@ Primer: Vanja Venko → `vanjaVenko1!`
 
 ## Tehnologije
 
+### Spletni del
 - **Backend:** PHP (MVC arhitektura)
 - **Podatkovna baza:** MySQL
 - **Spletni strežnik:** Apache
 - **Frontend:** HTML, CSS, JavaScript
 - **Komunikacija:** HTTPS
+
+### Mobilni del (Android)
+- **Razvojno okolje:** Android Studio
+- **Jezik:** Java
+- **API komunikacija:** REST API (JSON)
+- **Testiranje:** Android Emulator
 
 ---
 
@@ -153,14 +172,15 @@ Podatkovna baza `karte` je sestavljena iz štirih glavnih tabel:
 
 ---
 
-## amestitev in zagon
+## Namestitev in zagon
 
 ### Zahteve
 - Apache strežnik
 - PHP 7.4+
 - MySQL 5.7+
+- Android Studio (za mobilni del)
 
-### Koraki
+### Koraki za spletni del
 1. Klonirajte repozitorij:
    ```bash
    git clone <repository-url>
@@ -177,20 +197,13 @@ Podatkovna baza `karte` je sestavljena iz štirih glavnih tabel:
 
 5. Odprite brskalnik na `http://localhost/trgovina_kart`
 
----
+### Koraki za Android aplikacijo
+1. Odprite projekt v **Android Studiu**
+2. Nastavite URL naslov strežnika v kodi (npr. `http://10.0.2.2/trgovina_kart` za emulator)
+3. Zaženite aplikacijo v **Android emulatorju**
+4. Prijavite se s testnim uporabnikom za prikaz kart in osebnih podatkov
 
-## Struktura projekta
-
-```
-trgovina_kart/
-├── config/           # Konfiguracijske datoteke
-├── controllers/      # MVC krmilniki
-├── models/           # MVC modeli
-├── views/            # MVC pogledi
-├── public/           # Javne datoteke (CSS, JS, slike)
-├── sql/              # SQL skripte
-└── index.php         # Vstopna točka
-```
+> **Opomba:** Za emulator uporabite `10.0.2.2` kot naslov lokalnega strežnika (localhost).
 
 ---
 
