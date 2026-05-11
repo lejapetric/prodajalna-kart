@@ -1,214 +1,204 @@
 # Spletna trgovina za prodajo kart
 
-> Spletna aplikacija za prodajo vstopnic za koncerte, kinematografe, muzeje in druge dogodke.
+> Celovita spletna in mobilna rešitev za prodajo vstopnic za koncerte, gledališča, športne prireditve in druge dogodke.
 
 ## O projektu
 
-Projekt je bil izdelan kot seminarska naloga pri predmetu **Elektronsko poslovanje** na Fakulteti za računalništvo in informatiko Univerze v Ljubljani.
+Projekt je bil izdelan kot **seminarska naloga** pri predmetu **Elektronsko poslovanje** na **Fakulteti za računalništvo in informatiko Univerze v Ljubljani**.
 
-Aplikacija predstavlja funkcionalno spletno trgovino, ki omogoča:
-- Ogled ponudbe kart za različne dogodke
-- Dodajanje in odstranjevanje izdelkov iz nakupovalne košarice
-- Prijavo, odjavo in registracijo uporabnikov
-- Upravljanje naročil
+Cilj naloge je bil razviti **popolnoma funkcionalno spletno prodajalno** z več uporabniškimi vlogami, varnostnimi mehanizmi (SSL, hashiranje gesel) in **mobilno aplikacijo za Android**, ki prek REST API‑ja komunicira s strežnikom.
 
-Sistem je zgrajen po **MVC arhitekturnem vzorcu** za boljšo preglednost in vzdrževanje kode.
+Sistem je zgrajen po **arhitekturnem vzorcu MVC** (Model–View–Controller) za boljšo preglednost, vzdrževanje in varnost.
 
 ---
 
-## Mobilna aplikacija (Android)
+## Realizirane storitve
 
-Projekt vključuje tudi **Android aplikacijo**, razvito v **Android Studiu** (Java), ki prek API-ja komunicira s spletno stranjo. Aplikacija omogoča:
-
-- Prijavo uporabnikov
-- Brskanje po ponudbi kart (prikaz iz baze)
-- Prikaz osebnih podatkov uporabnika
-- Povezavo s strežnikom prek REST API-ja
-
-Aplikacija se poganja v **Android emulatorju** in se realno povezuje s spletno trgovino, kar omogoča testiranje delovanja na mobilni napravi.
+| Vloga | Funkcionalnosti |
+|-------|------------------------------|
+| **Administrator** | Prijava/odjava, posodobitev lastnih atributov, ustvarjanje/aktiviranje/deaktiviranje prodajalcev, urejanje njihovih atributov. |
+| **Prodajalec** | Prijava/odjava, posodobitev lastnih atributov, obdelava naročil (potrjevanje, preklic, storniranje), upravljanje artiklov (ustvarjanje, aktiviranje, deaktiviranje), upravljanje strank. |
+| **Stranka** | Prijava/odjava, posodobitev atributov, nakupovanje (košarica, zaključek nakupa), pregled zgodovine naročil (oddana, potrjena, preklicana, stornirana). |
+| **Anonimni uporabnik** | Pregled artiklov, registracija (prek HTTPS). |
 
 ---
 
-## Uporabniške vloge
+## Podatkovni model
 
-Sistem podpira štiri tipe uporabnikov z različnimi pravicami:
+Podatkovna baza `trgovina_kart` je **normalizirana do 3. normalne oblike**. Sestavljajo jo štiri glavne tabele:
 
-| Vloga | Pravice |
-|-------|---------|
-| **ADMIN** | Popoln nadzor nad sistemom, upravljanje uporabnikov in kart |
-| **SELLER** | Dodajanje, urejanje in aktiviranje lastnih kart za prodajo |
-| **BUYER** | Brskanje po ponudbi, nakup kart, pregled naročil |
-| **Anonimni uporabnik** | Ogled ponudbe, prijava/registracija |
+### 1. `users` – uporabniki sistema
+| Polje | Tip | Opis |
+|-------|-----|------|
+| id | INT | Primarni ključ |
+| name, surname | VARCHAR | Ime in priimek |
+| email | VARCHAR | Edinstven e‑poštni naslov |
+| password | VARCHAR | **Zgoščeno geslo (bcrypt)** – nikoli shranjeno v čisti obliki |
+| address_street, address_number | VARCHAR | Naslov (ulica in hišna številka) |
+| address_post, address_zip | VARCHAR | Kraj in poštna številka |
+| type | ENUM | Vloga: ADMIN, SELLER, BUYER |
+| aktiviran | BOOLEAN | Mehki bris – onemogoča prijavo |
+
+> **Opomba o geslih**: Vsa uporabniška gesla so pred shranjevanjem v podatkovno bazo zgoščena s kriptografsko varnim algoritmom **bcrypt**. To pomeni, da dejanske vrednosti gesel niso nikoli shranjene v bazi – tudi v primeru nepooblaščenega dostopa do baze napadalec ne pridobi uporabniških gesel.
+
+### 2. `karte` – artikli (vstopnice)
+| Polje | Tip | Opis |
+|-------|-----|------|
+| id | INT | Primarni ključ |
+| naziv | VARCHAR | Ime dogodka |
+| cena | DECIMAL(10,2) | Cena vstopnice |
+| aktiviran | BOOLEAN | Ali je artikel viden v trgovini |
+| seller_email | VARCHAR | Tuj ključ → `users.email` (prodajalec) |
+| user_id | INT | Tuj ključ → `users.id` |
+
+### 3. `orders` – naročila
+| Polje | Tip | Opis |
+|-------|-----|------|
+| id | INT | Primarni ključ |
+| user_id | INT | Tuj ključ → `users.id` (kupec) |
+| order_date | DATETIME | Datum naročila |
+| total_amount | DECIMAL(10,2) | Skupni znesek |
+| status | ENUM | confirmed, cancelled, refunded |
+| shipping_address | VARCHAR | Naslov za dostavo |
+| seller_email | VARCHAR | Tuj ključ → `users.email` (prodajalec) |
+
+### 4. `order_items` – postavke naročila
+| Polje | Tip | Opis |
+|-------|-----|------|
+| id | INT | Primarni ključ |
+| order_id | INT | Tuj ključ → `orders.id` |
+| karta_id | INT | Tuj ključ → `karte.id` |
+| quantity | INT | Količina |
+| price | DECIMAL(10,2) | Cena ob nakupu (zgodovinski podatek) |
+| seller_email | VARCHAR | Tuj ključ → `users.email` |
+
+---
+
+## Varnost sistema
+
+| Področje | Implementirani mehanizmi |
+|----------|--------------------------|
+| **Avtentikacija** | Uporabniško ime + geslo (avtentikacija poteka prek standardne prijave) |
+| **Avtorizacija** | RBAC (Role‑Based Access Control) – strogo ločene pravice po vlogah |
+| **Hramba gesel** | **bcrypt hashiranje** – gesla se nikoli ne shranjujejo v čisti obliki |
+| **Komunikacija** | Izključno HTTPS (SSL/TLS) – šifriran prenos podatkov |
+| **Zaščita pred napadi** | Pripravljene poizvedbe (SQL injection), filtriranje/escaping (XSS), validacija vnosov (strežnik+odjemalec) |
+| **Mehki bris** | `aktiviran` stolpec – podatki ostanejo, vendar so neaktivni |
 
 ---
 
 ## Testni uporabniki
 
-### ADMIN uporabnik
+### Administrator
 | Ime | Priimek | Email | Geslo | Vloga |
 |-----|---------|-------|-------|-------|
 | Admin | Admin | admin@karte.si | Admin123! | ADMIN |
 
 ### Prodajalci (SELLER)
-
 | Ime | Priimek | Email | Geslo | Aktiviran |
 |-----|---------|-------|-------|-----------|
-| Tomaz | Tomazin | tomaz@karte.si | tomazTomazin1! | ✅ |
-| Vanja | Venko | vanja@karte.si | vanjaVenko1! | ✅ |
-| Branko | Bernard | branko@karte.si | brankoBernard1! | ❌ (ni aktiviran) |
-| Katja | Klopcic | katja@karte.si | katjaKlopcic1! | ✅ |
-| Peter | Novak | peter@karte.si | peterNovak1! | ✅ |
-| Hana | Horvat | hana@karte.si | hanaHorvat1! | ✅ |
-| Aljaz | Soklic | aljaz@karte.si | aljazSoklic1! | ✅ |
+| Tomaz | Tomazin | tomaz@karte.si | TomazTomazin1! | ✅ |
+| Vanja | Venko | vanja@karte.si | VanjaVenko1! | ✅ |
+| Branko | Bernard | branko@karte.si | BrankoBernard1! | ❌ |
+| Katja | Klopcic | katja@karte.si | KatjaKlopcic1! | ✅ |
+| Peter | Novak | peter@karte.si | PeterNovak1! | ✅ |
+| Hana | Horvat | hana@karte.si | HanaHorvat1! | ✅ |
+| Aljaz | Soklic | aljaz@karte.si | AljazSoklic1! | ✅ |
 
 ### Kupci (BUYER)
-
-| Ime | Priimek | Email | Geslo | Aktiviran | Naslov |
-|-----|---------|-------|-------|-----------|---------|
-| Zori | Zoran | zori@karte.si | zoriZoran1! | ✅ | Zoranova ulica 1, Ljubljana 1000 |
-| Neza | Novak | neza@karte.si | nezaNovak1! | ✅ | Nezina Ulica 3, Ljubljana 1000 |
-| TEST | tester | test@karte.si | testTester1! | ❌ | testerjeva 4, Ljubljana 1000 |
-| Ana | Anič | ana@karte.si | anaAnič1! | ❌ | Ulica Ane 5, Ljubljana 1000 |
-| Miha | Novak | miha@karte.si | mihaNovak1! | ✅ | Ulica na Balance 55, Ljubljana 1000 |
-| Spela | Susnik | spela@karte.si | spelaSusnik1! | ✅ | Ulica na Balance 4, Ljubljana 1000 |
+| Ime | Priimek | Email | Geslo | Aktiviran |
+|-----|---------|-------|-------|-----------|
+| Zori | Zoran | zori@karte.si | ZoriZoran1! | ✅ |
+| Neza | Novak | neza@karte.si | NezaNovak1! | ✅ |
+| Ana | Anič | ana@karte.si | AnaAnič1! | ❌ |
+| Miha | Novak | miha@karte.si | MihaNovak1! | ✅ |
+| Spela | Susnik | spela@karte.si | SpelaSusnik1! | ✅ |
 
 > **Opomba:** Uporabniki z `aktiviran = 0` se ne morejo prijaviti v sistem.
+
+---
+
+## Mobilna aplikacija (Android)
+
+Projekt vključuje **funkcionalno Android aplikacijo**, razvito v **Android Studiu** (Java), ki prek REST API‑ja komunicira s spletno trgovino.
+
+### Implementirane funkcionalnosti
+- Prijava in odjava uporabnikov
+- Brskanje po artiklih
+
+Aplikacija se poganja v **Android emulatorju** ali na fizični napravi in se realno povezuje s spletno trgovino.
 
 ---
 
 ## Tehnologije
 
 ### Spletni del
-- **Backend:** PHP (MVC arhitektura)
-- **Podatkovna baza:** MySQL
-- **Spletni strežnik:** Apache
-- **Frontend:** HTML, CSS, JavaScript
-- **Komunikacija:** HTTPS
+| Komponenta | Tehnologija |
+|------------|-------------|
+| Backend | PHP (MVC arhitektura) |
+| Podatkovna baza | MySQL |
+| Spletni strežnik | Apache |
+| Frontend | HTML, CSS, JavaScript, AJAX |
+| Komunikacija | HTTPS (SSL/TLS) |
+| Varnost gesel | bcrypt |
 
 ### Mobilni del (Android)
-- **Razvojno okolje:** Android Studio
-- **Jezik:** Java
-- **API komunikacija:** REST API (JSON)
-- **Testiranje:** Android Emulator
-
----
-
-## Podatkovni model
-
-Podatkovna baza `karte` je sestavljena iz štirih glavnih tabel:
-
-### 1. `users` - Uporabniki
-| Polje | Tip | Opis |
-|-------|-----|------|
-| id | INT | Primarni ključ |
-| name, surname | VARCHAR | Ime in priimek |
-| email | VARCHAR | E-pošta (edinstvena) |
-| password | VARCHAR | Zgoščeno geslo (bcrypt) |
-| address_street, address_number | VARCHAR | Ulica in hišna številka |
-| address_post, address_zip | VARCHAR | Kraj in poštna številka |
-| type | ENUM('ADMIN','SELLER','BUYER') | Vloga uporabnika |
-| aktiviran | BOOLEAN | Ali je račun aktiviran |
-
-### 2. `karte` - Vstopnice
-| Polje | Tip | Opis |
-|-------|-----|------|
-| id | INT | Primarni ključ |
-| naziv | VARCHAR | Ime dogodka/vstopnice |
-| cena | DECIMAL(10,2) | Cena vstopnice |
-| aktiviran | BOOLEAN | Ali je karta vidna na strani |
-| seller_email | VARCHAR | Email prodajalca (tuj ključ na users.email) |
-| user_id | INT | ID prodajalca (tuj ključ na users.id) |
-
-**Primeri kart (aktiviranih):**
-| ID | Naziv | Cena | Prodajalec |
-|----|-------|------|------------|
-| 1 | Vstopnica na koncert | 25.00 € | tomaz@karte.si |
-| 12 | Joker Out Koncert | 35.00 € | peter@karte.si |
-| 13 | Big Foot Mama | 17.00 € | hana@karte.si |
-| 16 | Coldplay koncert | 85.00 € | tomaz@karte.si |
-| 17 | Muse koncert | 75.00 € | tomaz@karte.si |
-| 22 | Opera predstava | 45.00 € | katja@karte.si |
-| 28 | Katy Perry Koncert VIP | 500.00 € | peter@karte.si |
-| 33 | green day vstopnica | 110.00 € | peter@karte.si |
-
-### 3. `orders` - Naročila
-| Polje | Tip | Opis |
-|-------|-----|------|
-| id | INT | Primarni ključ |
-| user_id | INT | ID kupca (tuj ključ → users.id) |
-| order_date | DATETIME | Datum in čas naročila |
-| total_amount | DECIMAL(10,2) | Skupni znesek naročila |
-| status | ENUM('confirmed','cancelled','refunded') | Status naročila |
-| shipping_address | VARCHAR | Naslov za dostavo |
-| seller_email | VARCHAR | Email prodajalca (tuj ključ → users.email) |
-
-**Statusi naročil:**
-- `confirmed` - potrjeno (4 naročila)
-- `cancelled` - preklicano (2 naročili)
-- `refunded` - vračilo denarja (3 naročila)
-
-### 4. `order_items` - Postavke naročila
-| Polje | Tip | Opis |
-|-------|-----|------|
-| id | INT | Primarni ključ |
-| order_id | INT | ID naročila (tuj ključ → orders.id) |
-| karta_id | INT | ID kupljene karte (tuj ključ → karte.id) |
-| quantity | INT | Količina |
-| seller_email | VARCHAR | Email prodajalca |
-| price | DECIMAL(10,2) | Cena ob nakupu |
-
----
-
-## Primeri naročil
-
-| ID naročila | Kupec | Datum | Skupaj | Status | Kupljene karte |
-|-------------|-------|-------|--------|--------|----------------|
-| 7 | Ana Anič | 2026-01-02 | 90.00 € | confirmed | Muse koncert (75€) + Športna prireditev (15€) |
-| 8 | Neza Novak | 2026-01-02 | 8.00 € | confirmed | bunun kisses x4 (2€/kos) |
-| 13 | Spela Susnik | 2026-01-02 | 50.00 € | confirmed | Vstopnica na koncert x2 (25€/kos) |
+| Komponenta | Tehnologija |
+|------------|-------------|
+| Razvojno okolje | Android Studio |
+| Programski jezik | Java |
+| API komunikacija | REST API (JSON) |
+| Testiranje | Android Emulator / fizična naprava |
 
 ---
 
 ## Namestitev in zagon
 
 ### Zahteve
-- Apache strežnik
+- Apache strežnik (XAMPP / WAMP / LAMP)
 - PHP 7.4+
 - MySQL 5.7+
 - Android Studio (za mobilni del)
 
 ### Koraki za spletni del
-1. Klonirajte repozitorij:
+
+1. **Klonirajte repozitorij:**
    ```bash
    git clone <repository-url>
    ```
 
-2. Uvozite podatkovno bazo:
+2. **Uvozite podatkovno bazo:**
    ```bash
-   mysql -u root -p < baza.txt
+   mysql -u root -p < baza.sql
    ```
+   (ali prek phpMyAdmin – uvozite datoteko `baza.sql`)
 
-3. Konfigurirajte povezavo z bazo v `config/db.php`
+3. **Konfigurirajte povezavo z bazo:**
+   - Uredite datoteko `config/db.php`
+   - Nastavite ustrezne podatke za gostitelj, uporabniško ime, geslo in ime baze
 
-4. Postavite projekt v Apachejev `htdocs` ali ustrezno mapo
+4. **Postavite projekt v Apachejev `htdocs`** (XAMPP) ali ustrezno mapo
 
-5. Odprite brskalnik na `http://localhost/trgovina_kart`
+5. **Odprite brskalnik** na: `https://localhost/trgovina_kart`
+
+> **Opomba:** Za pravilno delovanje HTTPS je potrebna ustrezna konfiguracija SSL na Apache strežniku.
 
 ### Koraki za Android aplikacijo
-1. Odprite projekt v **Android Studiu**
-2. Nastavite URL naslov strežnika v kodi (npr. `http://10.0.2.2/trgovina_kart` za emulator)
-3. Zaženite aplikacijo v **Android emulatorju**
-4. Prijavite se s testnim uporabnikom za prikaz kart in osebnih podatkov
 
-> **Opomba:** Za emulator uporabite `10.0.2.2` kot naslov lokalnega strežnika (localhost).
+1. Odprite projekt v **Android Studiu**
+2. Nastavite URL naslov strežnika v kodi:
+   - Za emulator: `https://10.0.2.2/trgovina_kart`
+   - Za fizično napravo: `https://<vaš-IP-naslov>/trgovina_kart`
+3. Zaženite aplikacijo v **Android emulatorju** ali na fizični napravi
+4. Prijavite se s testnim uporabnikom (npr. `zori@karte.si` / `ZoriZoran1!`)
 
 ---
 
 ## Avtorica
 
-**Leja Petrič**
-Fakulteta za računalništvo in informatiko  
-Univerza v Ljubljani
+**Leja Petrič**  
+Fakulteta za računalništvo in informatiko, UNI 
+Univerza v Ljubljani  
 
 ---
 
