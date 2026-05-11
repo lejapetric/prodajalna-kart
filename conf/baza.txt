@@ -1,0 +1,101 @@
+mysql> use karte;
+
+mysql> select * from users;
++----+--------+---------+-----------------+--------------------------------------------------------------+------------------+----------------+--------------+-------------+--------+-----------+
+| id | name   | surname | email           | password                                                     | address_street   | address_number | address_post | address_zip | type   | aktiviran |
++----+--------+---------+-----------------+--------------------------------------------------------------+------------------+----------------+--------------+-------------+--------+-----------+
+|  6 | Tomaz  | Tomazin | tomaz@karte.si  | $2y$10$KjRPXS.Qsy3c7odgfEZ6DeFMXGnJ/lzu3I7H5B45gZ8.2gGaQYRjS |                  |                |              |             | SELLER |         1 |
+|  7 | Vanja  | Venko   | vanja@karte.si  | $2y$10$PzqQaLnmBhbsvufSh9KWCeZkutD5VL/ziSmzCR/liZwCbjiTQ.ruO |                  |                |              |             | SELLER |         1 |
+|  8 | Zori   | Zoran   | zori@karte.si   | $2y$10$d85Brn5KswO5Qea7ysXTY.GwMiNXrnfIKyAdYQJq7YL3LjqDo8Lhy | Zoranova ulica   | 1              | Ljubljana    | 1000        | BUYER  |         1 |
+|  9 | Branko | Bernard | branko@karte.si | $2y$10$ko89eLKY2n5ZSLBWCsqc9Oz1pkeI1ypy4LNihb7ilZeaCfaRVOfEu |                  |                |              |             | SELLER |         0 |
+| 10 | Neza   | Novak   | neza@karte.si   | $2y$10$AIemfr9S2Hd7/3d5hkvjV.TIBi8R1Ctj5Q6/oL5N65EkybYUwoIi2 | Nezina Ulica     | 3              | Ljubljana    | 1000        | BUYER  |         1 |
+| 11 | Katja  | Klopcic | katja@karte.si  | $2y$10$6PGuLVZird9AuH4MzUmzqO847E.dU00ualq/DQikaiDmp7HLon3ri |                  |                |              |             | SELLER |         1 |
+| 12 | Peter  | Novak   | peter@karte.si  | $2y$10$W8gIEaOGUD4GJ87HqEcXTuLqDLRCuTtUFqtAgA1x74WUius43ZkfO |                  |                |              |             | SELLER |         1 |
+| 13 | TEST   | tester  | test@karte.si   | $2y$10$oiFeW375oRBh03whHeunTehBUcJyDrXRAi5LzKIySYgLZp94sroHi | testerjeva       | 4              | Ljubljana    | 1000        | BUYER  |         0 |
+| 15 | Admin  | Admin   | admin@karte.si  | Admin123!                                                    |                  |                |              |             | ADMIN  |         1 |
+| 16 | Ana    | Anič    | ana@karte.si    | $2y$10$OTvJ5myxGsbH.EKysPD2G.2B8T5H5Lt1Utvz7s5MkVSF86mC6DMni | Ulica Ane        | 5              | Ljubljana    | 1000        | BUYER  |         0 |
+| 17 | Hana   | Horvat  | hana@karte.si   | $2y$10$taEvyyfW3R/9CTUiuTKQMuP1O3syedqjuJfU8ZyMZhclHYqDcJd2y |                  |                |              |             | SELLER |         1 |
+| 18 | Miha   | Novak   | miha@karte.si   | $2y$10$sMEJbEoXP2bJD32cCSwqqu8SmvTpeXJYshqsoUyBsTZ/X5i.llKhq | Ulica na Balance | 55             | Ljubljana    | 1000        | BUYER  |         1 |
+| 19 | Spela  | Susnik  | spela@karte.si  | $2y$10$MILl69Lvwfm0jnK2OED6te9mjCQWOCjUbTeduBzV5a3inlb2/dkGS | Ulica na Balance | 4              | Ljubljana    | 1000        | BUYER  |         1 |
+| 21 | Aljaz  | Soklic  | aljaz@karte.si  | $2y$10$m1pbMgGMHPpclfDPxNT8UeVtpHz4gn6ACaid3wEF4OvqiGaKUJAHW | NULL             | NULL           | NULL         | NULL        | SELLER |         1 |
++----+--------+---------+-----------------+--------------------------------------------------------------+------------------+----------------+--------------+-------------+--------+-----------+
+14 rows in set (0.00 sec)
+
+mysql> select * from karte;
++----+-------------------------------+---------+-----------+-----------------+---------+
+| id | naziv                         | cena    | aktiviran | seller_email    | user_id |
++----+-------------------------------+---------+-----------+-----------------+---------+
+|  1 | Vstopnica na koncert          |   25.00 |         1 | tomaz@karte.si  |       6 |
+|  2 | Vstopnica v kino              |    8.50 |         1 | tomaz@karte.si  |       6 |
+|  3 | Vstopnica v muzej             |   12.00 |         1 | tomaz@karte.si  |       6 |
+|  4 | Vstopnica na tekmo            |   30.00 |         1 | tomaz@karte.si  |       6 |
+|  5 | Vstopnica v zabaviščni park   |   20.00 |         1 | vanja@karte.si  |       7 |
+|  6 | bunun kisses                  |    2.00 |         1 | vanja@karte.si  |       7 |
+|  7 | karta test123                 |    5.00 |         0 | branko@karte.si |       9 |
+|  8 | igralnica                     |   10.00 |         0 | branko@karte.si |       9 |
+|  9 | test                          |  123.00 |         0 | katja@karte.si  |      11 |
+| 10 | test1234                      | 1234.99 |         0 | katja@karte.si  |      11 |
+| 11 | test                          |  123.00 |         0 | peter@karte.si  |      12 |
+| 12 | Joker Out Koncert             |   35.00 |         1 | peter@karte.si  |      12 |
+| 13 | Big Foot Mama                 |   17.00 |         1 | hana@karte.si   |      17 |
+| 14 | Big Foot Mama3                |   20.00 |         0 | hana@karte.si   |      17 |
+| 15 | Big Foot Mama2                |   20.00 |         0 | hana@karte.si   |      17 |
+| 16 | Coldplay koncert              |   85.00 |         1 | tomaz@karte.si  |       6 |
+| 17 | Muse koncert                  |   75.00 |         1 | tomaz@karte.si  |       6 |
+| 18 | Kino Marvel                   |    9.50 |         1 | vanja@karte.si  |       7 |
+| 19 | Kino Disney                   |    8.00 |         1 | vanja@karte.si  |       7 |
+| 20 | Pokrit koncert                |   20.00 |         0 | branko@karte.si |       9 |
+| 21 | Festival Velenje              |   35.00 |         0 | branko@karte.si |       9 |
+| 22 | Opera predstava               |   45.00 |         1 | katja@karte.si  |      11 |
+| 23 | Balet Labodje jezero          |   40.00 |         1 | katja@karte.si  |      11 |
+| 24 | Koncert Siddharta             |   25.00 |         1 | peter@karte.si  |      12 |
+| 25 | Športna prireditev            |   15.00 |         1 | peter@karte.si  |      12 |
+| 26 | Zabaviščni park               |   22.00 |         1 | hana@karte.si   |      17 |
+| 27 | Akvapark                      |   18.00 |         1 | hana@karte.si   |      17 |
+| 28 | Katy Perry Koncert VIP        |  500.00 |         1 | peter@karte.si  |      12 |
+| 29 | testttt                       |   15.00 |         0 | peter@karte.si  |      12 |
+| 30 | baneessssss                   | 1000.00 |         0 | peter@karte.si  |      12 |
+| 31 | baneessssss123                |  123.00 |         0 | peter@karte.si  |      12 |
+| 33 | green day vstopnica           |  110.00 |         1 | peter@karte.si  |      12 |
++----+-------------------------------+---------+-----------+-----------------+---------+
+32 rows in set (0.00 sec)
+
+mysql> select * from orders;
++----+---------+---------------------+--------------+-----------+-----------------------------------+----------------+
+| id | user_id | order_date          | total_amount | status    | shipping_address                  | seller_email   |
++----+---------+---------------------+--------------+-----------+-----------------------------------+----------------+
+|  5 |      16 | 2026-01-02 18:52:25 |        50.00 | cancelled | Ulica Ane 5 Ljubljana 1000        | hana@karte.si  |
+|  6 |      16 | 2026-01-02 18:52:38 |       105.00 | refunded  | Ulica Ane 5 Ljubljana 1000        | hana@karte.si  |
+|  7 |      16 | 2026-01-02 18:52:52 |        90.00 | confirmed | Ulica Ane 5 Ljubljana 1000        | hana@karte.si  |
+|  8 |      10 | 2026-01-02 18:56:22 |         8.00 | confirmed | Nezina Ulica 3 Ljubljana 1000     | vanja@karte.si |
+|  9 |      10 | 2026-01-02 18:56:29 |        12.00 | confirmed | Nezina Ulica 3 Ljubljana 1000     | vanja@karte.si |
+| 10 |      10 | 2026-01-02 18:56:41 |       154.50 | cancelled | Nezina Ulica 3 Ljubljana 1000     | vanja@karte.si |
+| 11 |      16 | 2026-01-02 20:15:47 |        17.00 | refunded  | Ulica Ane 5 Ljubljana 1000        | peter@karte.si |
+| 12 |      18 | 2026-01-02 20:19:17 |       150.00 | refunded  | Ulica na Balance 5 Ljubljana 1000 | vanja@karte.si |
+| 13 |      19 | 2026-01-02 23:05:16 |        50.00 | confirmed | Ulica na Balance 4 Ljubljana 1000 | vanja@karte.si |
++----+---------+---------------------+--------------+-----------+-----------------------------------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from order_items;
++----+----------+----------+----------+----------------+-------+
+| id | order_id | karta_id | quantity | seller_email   | price |
++----+----------+----------+----------+----------------+-------+
+|  1 |        5 |        1 |        2 | tomaz@karte.si | 25.00 |
+|  2 |        6 |        5 |        1 | vanja@karte.si | 20.00 |
+|  3 |        6 |       16 |        1 | tomaz@karte.si | 85.00 |
+|  4 |        7 |       17 |        1 | tomaz@karte.si | 75.00 |
+|  5 |        7 |       25 |        1 | peter@karte.si | 15.00 |
+|  6 |        8 |        6 |        4 | vanja@karte.si |  2.00 |
+|  7 |        9 |        3 |        1 | tomaz@karte.si | 12.00 |
+|  8 |       10 |        1 |        1 | tomaz@karte.si | 25.00 |
+|  9 |       10 |        5 |        1 | vanja@karte.si | 20.00 |
+| 10 |       10 |       17 |        1 | tomaz@karte.si | 75.00 |
+| 11 |       10 |       18 |        1 | vanja@karte.si |  9.50 |
+| 12 |       10 |       24 |        1 | peter@karte.si | 25.00 |
+| 13 |       11 |        2 |        2 | tomaz@karte.si |  8.50 |
+| 14 |       12 |        5 |        1 | vanja@karte.si | 20.00 |
+| 15 |       12 |       16 |        1 | tomaz@karte.si | 85.00 |
+| 16 |       12 |       22 |        1 | katja@karte.si | 45.00 |
+| 17 |       13 |        1 |        2 | tomaz@karte.si | 25.00 | |
++----+----------+----------+----------+----------------+-------+
+20 rows in set (0.00 sec)

@@ -1,0 +1,16 @@
+RewriteEngine On
+RewriteBase /
+
+# Prepreči neskončno zanko - če že gre na index.php, ne preusmerjaj
+RewriteCond %{REQUEST_URI} !^index\.php
+
+# Če datoteka ali mapa ne obstaja
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Preusmeri vse na index.php
+RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+
+# ODKOMENTIRAJ SAMO ČE IMAS SSL:
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/README.txt</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/.htaccess</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/index.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/ViewHelper.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/store-index.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/karta-detail.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/static/css/style.css</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/order.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/orders.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/registracija.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/model/User.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/model/UserDB.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/seller-detail.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/profile.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/prijava.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/seller-add.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/view/logout.php</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/sql/karte.sql</file>
+            <file>file:/home/ep/NetBeansProjects/mvc-rest/controller/PrijavaController.php</file>
+        </group>
+    </open-files>
+</project-private>
