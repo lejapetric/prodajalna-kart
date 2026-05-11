@@ -33,3 +33,5 @@ local.properties
 # Config (če imaš gesla)
 conf/config.php
 .env
+doc/
+conf/
