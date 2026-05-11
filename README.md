@@ -197,7 +197,7 @@ Aplikacija se poganja v **Android emulatorju** ali na fizični napravi in se rea
 ## Avtorica
 
 **Leja Petrič**  
-Fakulteta za računalništvo in informatiko, UNI 
+Fakulteta za računalništvo in informatiko (UNI), 
 Univerza v Ljubljani  
 
 ---
