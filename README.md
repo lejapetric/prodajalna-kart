@@ -1,6 +1,3 @@
-Super, popravil bom `README.md` in dodal informacije o Android aplikaciji, ki je povezana s spletno stranjo. Prav tako bom popravil tipkarsko napako ("amestitev" → "Namestitev").
-
-```markdown
 # Spletna trgovina za prodajo kart
 
 > Spletna aplikacija za prodajo vstopnic za koncerte, kinematografe, muzeje in druge dogodke.
