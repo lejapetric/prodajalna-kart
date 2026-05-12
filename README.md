@@ -11,6 +11,15 @@ Cilj naloge je bil razviti **popolnoma funkcionalno spletno prodajalno** z več 
 Sistem je zgrajen po **arhitekturnem vzorcu MVC** (Model–View–Controller) za boljšo preglednost, vzdrževanje in varnost.
 
 ---
+## Posnetek delovanja spletne trgovine
+
+Delovanje celotnega sistema (spletna trgovina + administratorski in prodajalski vmesnik) si lahko ogledate na spodnjem videoposnetku:
+
+🔗 **https://www.youtube.com/watch?v=WDEkoF3DpbM**
+
+---
+
+Celotno dokumentacijo (vključno s tem videom) lahko zdaj uporabiš kot končno poročilo seminarske naloge. Če želiš, lahko video dodam še na katero drugo mesto (npr. takoj pod “O projektu” ali pa v poglavje “Mobilna aplikacija”).
 
 ## Realizirane storitve
 
